@@ -1,0 +1,33 @@
+<div style="width:500px;margin:20px 50px;">
+	<div class="row">
+	<%= form_tag("/case/create", method: "get") do %>
+	<fieldset>
+	<legend>Submission Form</legend>
+	  <div class="large-12 columns">
+		  <%= label_tag(:first_name, "First Name") %>
+		  <%= text_field_tag(:first_name) %>
+	  </div>
+	  <div class="large-12 columns">
+	  <%= label_tag(:last_name, "Last Name") %>
+	  <%= text_field_tag(:last_name) %>
+	  </div>
+	  <div class="large-12 columns">
+	  <%= label_tag(:email, "Email") %>
+	  <%= text_field_tag(:email) %>
+	  </div>
+	  <div class="large-12 columns">
+	  <%= label_tag(:phone, "Phone") %>
+	  <%= text_field_tag(:phone) %>
+	  </div>
+	  <div class="large-12 columns">
+	  <%= label_tag(:question, "Question") %>
+	  <%= text_area_tag(:question) %>
+	  </div>
+	  <div class="large-12 columns">
+	  <br />
+	  <%= submit_tag("Submit", class: "button")  %>
+	  </div>
+	  </fieldset>
+	<% end %>
+	</div>
+</div>

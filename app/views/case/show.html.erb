@@ -1,0 +1,8 @@
+<div>
+	<% @case_content.each do |k,v| %>
+		<% unless v.blank? %>
+			<% k = k.gsub(/X-/, "") %>
+			<%= "#{k}: #{v}" %><br />
+		<% end %>	
+	<% end %>
+</div>

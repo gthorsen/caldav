@@ -1,0 +1,12 @@
+	
+	<div style="width:500px;margin:20px 50px;"
+	<fieldset>
+	<legend>Case List</legend>
+	<p style="color:grey;font-size:12px;"><i>There are <%= @cases.count %> case(s)</i></p>
+	<ul>
+		<% @cases.each_with_index do |kase, i| %>
+			<li style="list-style-type: none;"><%= link_to "#{kase}", { controller: "case", action: "show", uuid: kase, format: "json"}, class: "alert-box secondary" %></a></li>
+		<% end %>
+	</ul>
+	</fieldset>
+	</div>

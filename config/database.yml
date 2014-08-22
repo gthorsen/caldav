@@ -1,0 +1,11 @@
+development: &default
+  adapter: mysql2
+  host: localhost
+  encoding: utf8
+  database: caldav_dev
+  username: root
+  password: 
+
+test:
+  <<: *default
+  database: caldev_test
