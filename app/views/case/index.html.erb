@@ -1,12 +1,29 @@
 	
-	<div style="width:500px;margin:20px 50px;"
+	<div style="width:920px;margin:20px 50px;"
 	<fieldset>
 	<legend>Case List</legend>
-	<p style="color:grey;font-size:12px;"><i>There are <%= @cases.count %> case(s)</i></p>
-	<ul>
-		<% @cases.each_with_index do |kase, i| %>
-			<li style="list-style-type: none;"><%= link_to "#{kase}", { controller: "case", action: "show", uuid: kase, format: "json"}, class: "alert-box secondary" %></a></li>
+	<p style="color:grey;font-size:12px;"><i>There are <%= @cases%> case(s)</i></p>
+	<table width="920px">
+		<thead>
+			<th width="50px">ID</th>
+			<th width="320px">File Name</th>
+			<th>Question</th>
+			<th width="75px"></th>
+		</thead>
+		<tbody>
+		<% @case["content"].each do |kase| %>
+			<tr>
+				<td><%= kase[:id] %></td>
+				<td><%= kase[:item] %></td>
+				<td>
+					<%= link_to "#{kase[:question]}", { controller: "case", action: "show", uuid: kase[:item], format: "json"} %></a>
+				</td>	
+				<td>
+					<%= link_to "Delete", { controller: "case", action: "delete", uuid: kase[:item]} %>
+				</td>	
+			</tr>
 		<% end %>
-	</ul>
+		</tbody>
+	</table>
 	</fieldset>
 	</div>

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get 'case/submission', to: 'case#submit'
   get 'case/show/:uuid', to: 'case#show'
   get 'index', to: 'case#index'
+  get 'case/delete'
 
 
 

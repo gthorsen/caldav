@@ -4,25 +4,24 @@
    require 'socket'
    require 'uri'
    require 'securerandom'
-
+   HOST = 'localhost'
+   PORT = 8080
+   
    def index
     path = "/"
-    begin
-    Net::HTTP.start('localhost', 3500) do |http|
-      request = Net::HTTP::Get.new("localhost:3500#{path}", initheader = {'Content-Type' => 'text/html'})
-      request.body = ""
-      stream = []
-      http.request request do |response|
-        response.read_body do |chunk|
-          stream << chunk
-        end
-      end # Net::HTTPResponse object
-      @response = stream.join("")
+    req = Net::HTTP::Get.new(path, initheader = { 'Content-Type' => 'application/json; charset=utf-8'})
+    req.body = "list"
+    response = Net::HTTP.new(HOST, PORT).start {|http| http.request(req) }
+    response = response.body
+    @case = eval(response)
+    @case = @case[0]
+    @case["content"].each do |kase|
+      kase[:id] = (Case.where(file: kase[:item])).first.id
     end
-    rescue Exception => e
-     @response = e.message
-    end
-     @cases = @response.split(",")
+    respond_to do |format|
+        format.html # index.html.erb
+        format.json  { render :json => @case }
+      end
    end
 
 
@@ -33,14 +32,16 @@
      phone = params[:phone]
      question = params[:question]
      assigned_to = ["Graham", "Kevin", "Josh", "Joe", "David"].sample
-  	path = "/"
+     file_name = SecureRandom.uuid
+  	 path = "/"
     begin
-    Net::HTTP.start('localhost', 3500) do |http|
-      request = Net::HTTP::Put.new("localhost:3500#{path}", initheader = {'Content-Type' => 'text/html'})
+    Net::HTTP.start(HOST, PORT) do |http|
+      request = Net::HTTP::Put.new("#{HOST}:#{PORT}#{path}", initheader = {'Content-Type' => 'text/html'})
       request.body = \
 "BEGIN:VCALENDAR
 PRODID:-//Hydro//NONSGML Hydro Server//EN
 VERSION:2.0
+X-FILENAME: #{file_name}
 X-PATRON-FIRST-NAME: #{first_name}
 X-PATRON-LAST-NAME: #{last_name}
 X-PATRON-EMAIL: #{email}
@@ -55,9 +56,10 @@ END:VCALENDAR"
       http.request request do |response|
         response.read_body do |chunk|
           stream << chunk
-        end
+        end 
       end # Net::HTTPResponse object
       @response = stream.join("")
+      Case.create file: file_name
     end
     rescue Exception => e
      @response = e.message
@@ -68,8 +70,8 @@ END:VCALENDAR"
    def show
     path = "/"  
     begin
-    Net::HTTP.start('localhost', 3500) do |http|
-      request = Net::HTTP::Get.new("localhost:3500#{path}", initheader = {'Content-Type' => 'text/html'})
+    Net::HTTP.start(HOST, PORT) do |http|
+      request = Net::HTTP::Get.new("#{HOST}:#{PORT}#{path}", initheader = {'Content-Type' => 'text/html'})
       request.body = "uuid: #{params[:uuid]}"
       stream = [] 
       http.request request do |response|
@@ -94,9 +96,32 @@ END:VCALENDAR"
      end
    end
 
+    def delete
+      path = "/"  
+      file_name = params[:uuid]
+      begin
+        Net::HTTP.start(HOST, PORT) do |http|
+          request = Net::HTTP::Delete.new("#{HOST}:#{PORT}#{path}", initheader = {'Content-Type' => 'text/html'})
+          request.body = "uuid: #{file_name}"
+          stream = [] 
+          http.request request do |response|
+            response.read_body do |chunk|
+              stream << chunk
+            end
+          end # Net::HTTPResponse object
+        end
+        @response = stream.join("")
+        byebug
+      rescue Exception => e
+        @response = e.message
+      end
+     Case.where(file: file_name).first.delete
+     redirect_to :action => "index"
+    end
+
    def find
     cal_name = params[:cal]	
-    port = 3500
+    port = 8080
     host = "localhost"
     path = "/"
 
@@ -118,7 +143,7 @@ END:VCALENDAR"
    def report
     uuid = params[:uuid]
     summary = params[:summary]	
-    port = 3500
+    port = 8080
     host = "localhost"
     path = "/"
 
@@ -147,7 +172,7 @@ END:VCALENDAR"
 
    def options
     cal_name = params[:cal] 
-    port = 5232
+    port = 8080
     host = "localhost"
     path = "/#{cal_name}.ics/"
 
@@ -162,7 +187,7 @@ END:VCALENDAR"
 
     def create_content
       cal_name = params[:cal] 
-      port = 3500
+      port = 8080
       host = "localhost"
       path = "/"
 
